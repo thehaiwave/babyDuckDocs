@@ -66,7 +66,26 @@ conditionals and prints.
 
 ### `genExpressionQuadruple`
 
-Does the same as `genAssignQuadruple` but without taking care of the `=` symbol.
+Does the same as `genAssignQuadruple` but without taking care of the `=` symbol. In general, both this and `genAssignQuadruple`
+work fundamentally the same. They iterate through an array of objects that look like this:
+
+{name: 'someName', type: 'some-type'}
+
+And using an operand and operator stack, they decide what to do when seeing an object like the one above. For instance, if it
+sees an operator whose type is `/`, it will add it to the operator stack, if it sees an object whose type is `Identifier` or
+`CteInt` it will add them to the operand stack.
+
+Now, the algorithm for this gives division and multiplication the second highest priority. Basically, every time we come accross either
+of these 2 symbols we immediately evaluate, but we cannot do this when seeting the operator itself because it is a binary operator,
+we need 2 symbols. So, instead every time we come accross an operand we ask if the top of the operator stack contains a multiplication
+or a divison. If it does, we pop it, along with 2 operands from the operand stack and add a quadruple immediately.
+
+The idea is to leave only subtractions and additions that we can evaluate from right to left by recursively popping the operand
+and operator stacks. This is not always possible because we also have to support parenthesis. These are the highest priority operator,
+and every time we come accross an opening parenthesis we start keeping track of when it closes to we can immediately start creating
+quadruples for everything that's inside of it before continuing with the expression.
+
+By following the above steps we can correcty evaluate expression and resolve them to quadruples.
 
 ### `getQuadruples`
 
