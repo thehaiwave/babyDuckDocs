@@ -13,9 +13,9 @@ provided to generate the grammar is shown here:
 
 The equivalent grammars for each of these tokens are shown as follows:
 
-## Lexer tokens
-
 ```
+grammar babyduck;
+
 Program         : 'program';
 Main            : 'main';
 End             : 'end';
@@ -53,14 +53,7 @@ CteString: '"' (~["] | '\\"')* '"';
 CteInt: [0-9]+;
 CteFloat: [0-9]+ '.' [0-9]+;
 
-Whitespace: [ \t]+ -> skip;
-Newline: ('\r' '\n'? | '\n') -> skip;
-```
-
-## Parser rules
-
-```
-programa: Program Identifier Semi vars? funcs* Main body End;
+programa: Program Identifier Semi vars* funcs* Main body End;
 
 vars: Var (commaSeparatedId Colon type Semi)+;
 
@@ -123,6 +116,9 @@ factorSequence: (Plus | Minus)? (Identifier | cte);
 cte:
     CteInt
     | CteFloat;
+
+Whitespace: [ \t]+ -> skip;
+Newline: ('\r' '\n'? | '\n') -> skip;
 ```
 
 There's not much to talk about here. One thing that might me of interest is the use of additional parser rules.
@@ -226,3 +222,9 @@ This makes it trivial to match names to their types. Why does this happen? Becau
 can be repeated multiple times, it automatically wraps the results in an array. Our first and second rule
 both do this, but the difference is since now it is using a "helper" rule (`commaSeparatedId`), ANTLR will
 put each "call" to it into its own array, resulting in the 3 different arrays for the 3 different name declarations.
+
+## Error detection
+
+The objects returned by ANTLR when creating the parser object and the AST can contain an error field, which
+is used to throw an error and stop execution if either of these failed. This way, syntax errors are caught
+before traversing the tree, so we only need to worry about syntactic analysis in the subsequent processing.

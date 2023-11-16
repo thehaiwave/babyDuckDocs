@@ -50,8 +50,10 @@ npm i
 Run the compiler:
 
 ```
-npm run compile
+npm run compile -i somefile.babyduck
 ```
+
+The `compile` command does not take in any other options, only the `-i` flag and an input file to compile.
 
 Optionally, you can run tests or regenerate the parser with the following commands respectively:
 
@@ -59,3 +61,6 @@ Optionally, you can run tests or regenerate the parser with the following comman
 npm run test
 npm run antlr
 ```
+
+The tests only test the parsing. No testing is done with the resulting quadruples or interpreted in any other
+way.
