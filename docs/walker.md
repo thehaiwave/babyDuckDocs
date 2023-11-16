@@ -45,55 +45,6 @@ const tokenObjects = tokens.tokens;
 
 Let's say we get a program like this:
 
----
-
-layout: default
-title: Tree Walker
-nav_order: 4
-
----
-
-# Tree Walker
-
-## The Class
-
-When creating the ANTLR parser, one of the classes it automatically generates is a listener clas.
-In my project, this class can be found under `./parser/babyduckListener.js`. This class by itself
-only provides a couple of listener methods of the `enterNode` and `exitNode` for every single
-one of our grammar tokens. That is to say, if our grammar consists of a `main` and `body` token,
-this class will give us back:
-
--`enterBody`
-
--`exitBody`
-
--`enterMain`
-
--`exitMain`
-
-Essentially, we can pass callbacks for when the listener class starts and finishes matching any
-given token. This proves useful when handling context, but more on that later.
-
-Now, this class is useless by itself. What ANTLR allows us to do is extend this class and implement
-the content of these callbacks ourselves. For this, I created the class `Porfavor` which
-extends the `babyduckListener` class. There's a caveat to this though. Although the class
-gives us a `ctx` object passed to every listener function containing data about the matched token,
-its parent, children, etc., we cannot actually orient ourselves in the program with just this
-information. The `ctx` object gives us a very limited amount of data, and it is meant to be used
-to perform relatively simple operations upon the grammar. Crucially, it does NOT give us the types
-for the tokens. It does not tell us if a token is a `CteString` or an `Identifier` directly, for instance.
-We have to convert a type ID to a string to make this information usable.
-
-The solution to this is to work with the array of tokens of the entire program itself, which looks like
-this:
-
-```js
-const tokens = new antlr4.CommonTokenStream(lexer);
-const tokenObjects = tokens.tokens;
-```
-
-Let's say we get a program like this:
-
 ```
 main Programa;
     main{};
